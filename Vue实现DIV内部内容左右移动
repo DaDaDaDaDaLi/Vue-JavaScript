@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>vuedemo</title>
+    <style>
+        #box{
+            height: 350px;
+            width: 700px;
+            border: 1px solid black;
+            overflow-x: scroll;
+            //取消边缘留白
+            white-space:nowrap;
+        }
+        #box::-webkit-scrollbar {display:none}
+        .div1{
+            height: 300px;
+            width: 300px;
+            background-color: blue;
+            //行内块级
+            display: inline-block;
+        }
+        .div2{
+            display: inline-block;
+            height: 300px;
+            width: 300px;
+            background-color:red;
+        }
+        .div3{
+            height: 300px;
+            background-color:green;
+
+            width: 300px;
+            display: inline-block;
+        }
+
+    </style>
+</head>
+<body>
+//调用ref获取外层div
+<div id="box"  ref="Box" @mouseover="stop1" @mouseout="restart1" >
+
+        <div class="div1"></div>
+        <div class="div2"></div>
+        <div class="div3"></div>
+</div>
+
+<!--vuedemo-->
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+
+<script>
+//设置控制移动时间间隔
+    var time1;
+    var time2;
+
+    var vm = new Vue({
+        el: "#box",
+        data: {
+            moveStep:1,
+            flag:true
+        },
+       mounted(){
+            time1=setInterval(this.moveL,100)
+       },
+        methods:{
+            moveL(){
+                this.$refs.Box.scrollLeft++;
+                this.moveStep++;
+                console.log(this.moveStep);
+            },
+            moveR(){
+                this.$refs.Box.scrollLeft--;
+                this.moveStep--;
+                console.log(this.moveStep);
+            },
+            stop1() {
+              clearInterval(time1);
+                clearInterval(time2);
+
+            },
+            restart1(){
+                if(this.flag){
+                    time1=setInterval(this.moveL,100);
+                }else {
+                    time2 = setInterval(this.moveR,100);
+                }
+
+            }
+        },
+        watch:{
+            moveStep(val,oldVal){
+                if(val==500){
+                    this.flag=false;
+                    clearInterval(time1);
+                    time2 = setInterval(this.moveR,100);
+                }else if(val==1){
+                    clearInterval(time2);
+                    this.flag=true;
+                    time1=setInterval(this.moveL,100);
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>
